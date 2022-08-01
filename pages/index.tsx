@@ -3,14 +3,14 @@ import Head from 'next/head'
 import Banner from "../components/Banner";
 import Header from "../components/Header";
 import SmallCard from "../components/SmallCard";
+import axios from "axios";
+import {CardsData, ExploreData} from "../models/indexModels";
+import MediumCard from "../components/MediumCard";
+import LargeCard from "../components/LargeCard";
+import Footer from "../components/Footer";
 
-interface ExploreData{
-	img:string;
-	distance:string;
-	location:string;
-}
-const Home: NextPage<any> = (props:{exploreData:ExploreData[]}) => {
-	const {exploreData} = props;
+const Home: NextPage<any> = (props:{exploreData:ExploreData[],cardsData:CardsData[]}) => {
+	const {exploreData,cardsData} = props;
   return (
     <div className="">
       <Head>
@@ -37,20 +37,34 @@ const Home: NextPage<any> = (props:{exploreData:ExploreData[]}) => {
 				</section>
 				<section>
 					<h2 className="text-4xl font-semibold py-4">Live Anywhere</h2>
+					<div className="flex space-x-3 overflow-scroll scrollbar-hide p-3 -ml-3">
+						{cardsData?.map((item) => {
+							return (<MediumCard key={item.img} img={item.img} title={item.title}/>)
+						})}
+					</div>
 				</section>
+				<LargeCard
+					img={"https://links.papareact.com/4cj"}
+					title={"The Greatest Outdoors"}
+					description="Wishlists curated by Airbnb"
+					buttonText="Get Inspired"
+				/>
 			</main>
+			<Footer/>
     </div>
   )
 }
 
 export const getStaticProps = async () => {
-	const exploreData = await fetch("https://links.papareact.com/pyp");
-	const res = await exploreData.json();
+	const exploreData = await axios("https://links.papareact.com/pyp");
+	const exploreDataResponse = await exploreData.data;
 	
-	const cardsData = await fetch("https://")
+	const cardsData = await axios("https://links.papareact.com/zp1");
+	const cardsDataResponse = await cardsData.data;
 	return {
 		props:{
-			exploreData:res,
+			exploreData:exploreDataResponse,
+			cardsData:cardsDataResponse,
 		}
 	}
 }
